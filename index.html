@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunday — a gentle meal planner</title>
+<meta name="description" content="A soft weekly meal planner with a recipe box, automatic grocery list and a week that saves itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fbf5e9'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23f6c9b4'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23fbf5e9'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="paper-wash" aria-hidden="true">
+  <span class="blob blob-lilac"></span>
+  <span class="blob blob-peach"></span>
+  <span class="blob blob-sage"></span>
+</div>
+<a class="skip-link" href="#week-grid">Skip to the week plan</a>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand">
+      <div class="brand-name">
+        <span class="sun-doodle" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="9" fill="currentColor"/><path d="M24 4v6M24 38v6M4 24h6M38 24h6M9.9 9.9l4.2 4.2M33.9 33.9l4.2 4.2M38.1 9.9l-4.2 4.2M14.1 33.9l-4.2 4.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <h1>sunday</h1>
+      </div>
+      <p class="tagline">a gentle meal planner for real weeks</p>
+    </div>
+
+    <div class="week-nav" aria-label="Week navigation">
+      <button type="button" class="round-button" id="prev-week" aria-label="Previous week">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="week-label">
+        <span id="week-kicker">This week</span>
+        <strong id="week-range">19 – 25 May</strong>
+      </div>
+      <button type="button" class="round-button" id="next-week" aria-label="Next week">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="today-button" id="today">Today</button>
+    </div>
+
+    <div class="household">
+      <label for="servings">Cooking for</label>
+      <div class="stepper">
+        <button type="button" id="servings-minus" aria-label="One fewer person">−</button>
+        <input id="servings" type="number" min="1" max="12" step="1" value="4" inputmode="numeric">
+        <button type="button" id="servings-plus" aria-label="One more person">+</button>
+      </div>
+      <span class="household-unit">at the table</span>
+    </div>
+  </div>
+
+  <div class="overview">
+    <p class="week-note" id="week-note">A soft week, mostly planned. The kettle is on.</p>
+    <div class="stats">
+      <div class="stat stat-peach">
+        <span id="stat-meals">0</span>
+        <small>meals planned</small>
+      </div>
+      <div class="stat stat-sage">
+        <span id="stat-groceries">0</span>
+        <small>things to buy</small>
+      </div>
+      <div class="stat stat-lilac">
+        <span id="stat-people">4</span>
+        <small>at the table</small>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="toolbar">
+    <div class="tabs" role="tablist" aria-label="Planner sections">
+      <button type="button" class="tab is-active" id="tab-week" role="tab" aria-selected="true" aria-controls="panel-week">Week plan</button>
+      <button type="button" class="tab" id="tab-groceries" role="tab" aria-selected="false" aria-controls="panel-groceries">Grocery list <span class="tab-badge" id="tab-count">0</span></button>
+    </div>
+    <button type="button" class="clear-week" id="clear-week">Clear this week</button>
+  </div>
+
+  <div class="hand-note" id="hand-note" hidden>
+    <span class="hand-dot" aria-hidden="true"></span>
+    <p>Holding <strong id="hand-name">a recipe</strong> — tap a <span id="hand-meal">meal</span> slot to tuck it in.</p>
+    <button type="button" id="hand-cancel">Put it back</button>
+  </div>
+
+  <section class="panel" id="panel-week" role="tabpanel" aria-labelledby="tab-week">
+    <div class="spread">
+      <section class="planner" aria-labelledby="planner-title">
+        <div class="planner-head">
+          <div>
+            <p class="eyebrow">The plan</p>
+            <h2 id="planner-title">This week's table</h2>
+          </div>
+          <p class="planner-meta"><span id="planned-count">0</span> of 21 meals planned</p>
+        </div>
+        <div class="week-grid" id="week-grid"></div>
+        <p class="planner-tip">
+          <span aria-hidden="true">↘</span> Tap a slot to browse recipes, or drag a card over from the recipe box.
+        </p>
+      </section>
+
+      <aside class="recipe-box" aria-labelledby="recipe-title">
+        <div class="box-head">
+          <div>
+            <p class="eyebrow">Little ideas</p>
+            <h2 id="recipe-title">The recipe box</h2>
+          </div>
+          <span class="recipe-count" id="recipe-count">18 recipes</span>
+        </div>
+        <div class="recipe-search">
+          <label class="sr-only" for="recipe-search">Search recipes</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="recipe-search" type="search" placeholder="Find a recipe…" autocomplete="off">
+        </div>
+        <div class="recipe-filters" id="recipe-filters" role="group" aria-label="Filter recipes by meal">
+          <button type="button" data-filter="all" class="is-active" aria-pressed="true">All</button>
+          <button type="button" data-filter="breakfast" aria-pressed="false">Breakfast</button>
+          <button type="button" data-filter="lunch" aria-pressed="false">Lunch</button>
+          <button type="button" data-filter="dinner" aria-pressed="false">Dinner</button>
+        </div>
+        <div class="recipe-list" id="recipe-list"></div>
+        <p class="recipe-empty" id="recipe-empty" hidden>No recipes match that little thought. Try another word.</p>
+        <p class="recipe-hint">Tap a recipe, then tap a matching slot. Or drag it across.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-groceries" role="tabpanel" aria-labelledby="tab-groceries" hidden>
+    <div class="grocery-layout">
+      <div class="grocery-sheet">
+        <div class="grocery-head">
+          <div>
+            <p class="eyebrow">For the basket</p>
+            <h2>Grocery list</h2>
+            <p class="grocery-sub" id="grocery-sub">Everything for this week's meals.</p>
+          </div>
+          <button type="button" class="reset-ticks" id="reset-ticks">Untick all</button>
+        </div>
+        <div class="grocery-groups" id="grocery-groups"></div>
+        <div class="grocery-empty" id="grocery-empty" hidden>
+          <svg viewBox="0 0 120 90" aria-hidden="true">
+            <path d="M18 38h84l-8 40a8 8 0 0 1-8 7H34a8 8 0 0 1-8-7z" fill="#f6e7ab" stroke="#6b5a52" stroke-width="2"/>
+            <path d="M40 38c0-16 8-26 20-26s20 10 20 26" fill="none" stroke="#6b5a52" stroke-width="2"/>
+            <path d="M42 58c8 6 28 6 36 0" fill="none" stroke="#6b5a52" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p>The basket is waiting. Add a meal or two to the week and the list will write itself.</p>
+          <button type="button" class="soft-button" id="to-plan">Back to the week</button>
+        </div>
+        <div class="grocery-foot" id="grocery-foot">
+          <p id="grocery-progress">0 of 0 gathered</p>
+          <div class="basket-track" aria-hidden="true"><span id="basket-fill"></span></div>
+        </div>
+      </div>
+      <aside class="kitchen-note">
+        <p class="eyebrow">A small reminder</p>
+        <h2>Nothing needs to be perfect.</h2>
+        <p>Swap Thursday for leftovers. Eat the same breakfast three days running. The planner is here to hold the week, not to grade it.</p>
+        <div class="note-doodle" aria-hidden="true">
+          <svg viewBox="0 0 160 90"><path d="M12 72c24-40 58-48 92-36 16 6 28 18 36 31" fill="none" stroke="#6b5a52" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 7"/><path d="M128 48l14 22-25-4" fill="none" stroke="#6b5a52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><span aria-hidden="true">✿</span> Made for slow Sundays and ordinary Tuesdays.</p>
+  <p>Your week is kept in this browser, quietly.</p>
+</footer>
+
+<div class="modal" id="picker" hidden>
+  <div class="modal-scrim" data-close-picker></div>
+  <div class="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title">
+    <div class="picker-top">
+      <div>
+        <p class="eyebrow" id="picker-kicker">Monday · lunch</p>
+        <h2 id="picker-title">Choose a lunch</h2>
+      </div>
+      <button type="button" class="picker-close" id="picker-close" aria-label="Close the recipe picker">×</button>
+    </div>
+    <div class="recipe-search picker-search">
+      <label class="sr-only" for="picker-search">Search recipes</label>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="picker-search" type="search" placeholder="Search this meal…" autocomplete="off">
+    </div>
+    <div class="picker-list" id="picker-list"></div>
+    <p class="recipe-empty" id="picker-empty" hidden>Nothing matches yet. Try a simpler word.</p>
+  </div>
+</div>
+
+<p class="sr-only" id="status" role="status" aria-live="polite"></p>
+
+<script src="app.js"></script>
+</body>
+</html>
