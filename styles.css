@@ -1401,3 +1401,22 @@ main {
   .recipe-card:hover,
   .picker-card:hover { transform: none; }
 }
+
+@media print {
+  body * { visibility: hidden; }
+  .planner, .planner * { visibility: visible; }
+  .grocery, .grocery * { visibility: visible; }
+  .planner, .grocery {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20mm;
+    background: white;
+    box-shadow: none;
+    border: 2px solid var(--ink);
+    color: var(--ink);
+  }
+  .brand, .stats, .today-button, .tabs, .picker, .recipe-box .box-actions { display: none; }
+  .page { border: none; box-shadow: none; }
+}
